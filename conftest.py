@@ -1,6 +1,7 @@
 import pytest
 from selenium import webdriver
 from pages.home_page import HomePage
+from pages.contact_page import ContactPage
 
 def pytest_addoption(parser):
     """Add a command-line option for selecting the browser."""
@@ -32,3 +33,26 @@ def home_page(browser):
     except:
         pass  # Ignore errors if cookies button is not displayed
     return home_page
+
+@pytest.fixture
+def custom_page(browser):
+    """Fixture to open a custom URL and return the appropriate Page object."""
+
+    def load_page(url):
+        browser.get(url)  # Open the desired URL
+        if "contact" in url:
+            page = ContactPage(browser)
+        else:
+            page = HomePage(browser)
+
+        # Accept cookies if present
+        try:
+            page.accept_cookies()
+        except:
+            pass
+
+        return page
+
+    return load_page
+
+
