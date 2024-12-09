@@ -3,7 +3,9 @@ from pages.home_page import HomePage
 from pages.contact_page import ContactPage
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
 import time
+from pathlib import Path
 
 def test_epam_title(home_page):
     # Step 2: Get the page title
@@ -131,7 +133,28 @@ def test_company_logo_redirects_to_homepage(custom_page):
     actual_url = about_page.driver.current_url
     assert actual_url == expected_url, f"Expected URL {expected_url}, but got {actual_url}."
 
+def test_report_download(custom_page):
+    # Step 1: Open the desired URL and get the ContactPage object
+    about_page = custom_page("https://www.epam.com/about")
 
+    # Step 2: Locate and click the report download button
+    report_button = about_page.driver.find_element(*ContactPage.REPORT_DOWNLOAD_BUTTON)
+
+    # Step 3: Initiate the download
+    about_page.driver.execute_script("arguments[0].click();", report_button)
+
+    # Step 4: Wait for the download to complete
+    time.sleep(10)  # Adjust the wait time as needed for the download
+
+    # Step 5: Verify the file exists in the Downloads folder
+    downloads_folder = str(Path.home() / "Downloads")  # Get the Downloads folder path
+    expected_file_name = "EPAM_Corporate_Overview_Q4_EOY.pdf"
+    downloaded_file = os.path.join(downloads_folder, expected_file_name)
+    assert os.path.exists(downloaded_file), f"File {expected_file_name} was not downloaded."
+
+    # Step 6: (Optional) Verify file extension and cleanup
+    assert downloaded_file.endswith(".pdf"), "Downloaded file does not have a .pdf extension."
+    print(f"File {expected_file_name} successfully downloaded.")
 
 
 
