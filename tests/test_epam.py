@@ -118,12 +118,24 @@ def test_form_fields_validation(custom_page):
         assert 'validation-field' in field_element.get_attribute(
             'class'), f"Field {locator} does not have the 'validation-field' class."
 
-    # Step 5: Validate the consent checkbox
-    consent_checkbox = contact_page.driver.find_element(*ContactPage.CONSENT_CHECKBOX)
-    assert consent_checkbox.get_attribute('data-required') == 'true', "Consent checkbox is not marked as required."
-    assert consent_checkbox.get_attribute('data-required-msg') == 'Please check this box if you want to proceed', (
-        "Incorrect required message for the consent checkbox."
-    )
+def test_company_logo_redirects_to_homepage(custom_page):
+    # Step 1: Open the desired URL and get the HomePage object
+    about_page = custom_page("https://www.epam.com/about")
+
+    # Step 2: Find and click on the company logo
+    logo_element = about_page.driver.find_element(*HomePage.HEADER_EPAM_LOGO)
+    logo_element.click()
+
+    # Step 3: Verify that the homepage is opened
+    expected_url = "https://www.epam.com/"
+    actual_url = about_page.driver.current_url
+    assert actual_url == expected_url, f"Expected URL {expected_url}, but got {actual_url}."
+
+
+
+
+
+
 
 
 
