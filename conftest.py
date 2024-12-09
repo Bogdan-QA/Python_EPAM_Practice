@@ -37,7 +37,6 @@ def home_page(browser):
 @pytest.fixture
 def custom_page(browser):
     """Fixture to open a custom URL and return the appropriate Page object."""
-
     def load_page(url):
         browser.get(url)  # Open the desired URL
         if "contact" in url:
@@ -45,11 +44,11 @@ def custom_page(browser):
         else:
             page = HomePage(browser)
 
-        # Accept cookies if present
+        # Try to accept cookies using the BasePage method
         try:
             page.accept_cookies()
-        except:
-            pass
+        except Exception as e:
+            print(f"Cookies banner not found or error occurred: {e}")
 
         return page
 
